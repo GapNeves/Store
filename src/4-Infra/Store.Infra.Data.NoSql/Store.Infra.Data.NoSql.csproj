@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="LiteDB" Version="5.0.21" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\3-Domain\Store.Domain.Interfaces\Store.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\..\3-Domain\Store.Domain.Models\Store.Domain.Models.csproj" />
+  </ItemGroup>
+
 </Project>

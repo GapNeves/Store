@@ -7,7 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="LiteDB" Version="5.0.21" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\3-Domain\Store.Domain.Interfaces\Store.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\..\4-Infra\Store.Infra.Data.NoSql\Store.Infra.Data.NoSql.csproj" />
   </ItemGroup>
 
 </Project>
