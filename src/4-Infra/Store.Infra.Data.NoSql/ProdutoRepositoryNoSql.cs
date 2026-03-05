@@ -4,12 +4,12 @@ using Store.Domain.Interfaces;
 using Store.Domain.Models;
 
 namespace Store.Infra.Data.NoSql;
-public class ProdutoRepository : IProdutoRepository
+public class ProdutoRepositoryNoSql : IProdutoRepository
 {
     private readonly ILiteCollection<Produto> _produtoCollection;
     private readonly ILiteDatabase _database;
 
-    public ProdutoRepository(ILiteDatabase database)
+    public ProdutoRepositoryNoSql(ILiteDatabase database)
     {
         _database = database;
         _produtoCollection = _database.GetCollection<Produto>("produtos");
