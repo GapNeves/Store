@@ -20,10 +20,10 @@ public class ClienteService
         if (string.IsNullOrWhiteSpace(cliente.Email))
             throw new ArgumentException("Email é obrigatório");
 
-        if (cliente.Cpf <= 0)
-            throw new ArgumentException("CPF inválido");
+        if (string.IsNullOrWhiteSpace(cliente.Cpf) || cliente.Cpf.Length != 11)
+            throw new ArgumentException("CPF do cliente é obrigatório e deve ter 11 dígitos");
 
-        _clienteRepository.MapAddCliente(cliente);
+        _clienteRepository.AddCliente(cliente);
     }
 
     public void ValidarEAtualizar(Cliente cliente)
@@ -34,6 +34,6 @@ public class ClienteService
         if (string.IsNullOrWhiteSpace(cliente.Email))
             throw new ArgumentException("Email é obrigatório");
 
-        _clienteRepository.MapUpdateCliente(cliente);
+        _clienteRepository.UpdateCliente(cliente);
     }
 }

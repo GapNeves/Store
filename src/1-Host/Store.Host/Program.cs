@@ -28,6 +28,8 @@ builder.Services.AddScoped<IProdutoRepository, ProdutoRepositoryNoSql>();
 builder.Services.AddScoped<IVendaRepository, VendaRepositoryNoSql>();
 
 builder.Services.AddScoped<IClienteAppService, ClienteAppService>();
+builder.Services.AddScoped<IProdutoAppService, ProdutoAppService>();
+builder.Services.AddScoped<IVendaAppService, VendaAppService>();
 
 var app = builder.Build();
 

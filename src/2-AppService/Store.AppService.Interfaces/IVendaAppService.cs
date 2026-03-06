@@ -1,5 +1,11 @@
 ﻿
+using Store.Domain.Models;
+
 namespace Store.AppService.Interfaces;
-internal class IVendaAppService
+public interface IVendaAppService
 {
+    void Add(Venda venda);
+    void Update(Venda venda);
+    Venda GetById(int id);
+    IEnumerable<Venda> GetAll();
 }

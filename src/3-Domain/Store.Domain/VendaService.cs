@@ -1,10 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Store.Domain.Interfaces;
+using Store.Domain.Models;
 
 namespace Store.Domain;
-internal class VendaService
+public class VendaService
 {
+    private readonly IVendaRepository _vendaRepository;
+
+    public VendaService(IVendaRepository vendaRepository)
+    {
+        _vendaRepository = vendaRepository;
+    }
+
+    public void ValidarEAdicionar(Venda venda)
+    {
+        if (venda.CpfCliente == null)
+            throw new ArgumentException("Uma venda precisa de um CPF de cliente válido");
+
+        _vendaRepository.IniciaVenda(venda);
+    }
+
+    public void ValidarEAtualizar(Venda venda)
+    {
+        if (venda.CpfCliente == null)
+            throw new ArgumentException("Uma venda precisa de um CPF de cliente válido");
+    
+        _vendaRepository.UpdateVenda(venda);
+    }
 }

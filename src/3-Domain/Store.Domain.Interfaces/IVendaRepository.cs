@@ -4,6 +4,7 @@ namespace Store.Domain.Interfaces;
 public interface IVendaRepository
 {
     void IniciaVenda(Venda venda);
-    void GetVenda(int id);
-    void UpdateVenda(int id);
+    void UpdateVenda(Venda venda);
+    Venda GetVendaById(int id);
+    IEnumerable<Venda> GetAllVendas();
 }

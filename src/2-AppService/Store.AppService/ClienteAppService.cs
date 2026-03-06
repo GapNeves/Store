@@ -15,26 +15,26 @@ public class ClienteAppService : IClienteAppService
 
     public void Add(Cliente cliente)
     {
-        _clienteRepository.MapAddCliente(cliente);
+        _clienteRepository.AddCliente(cliente);
     }
 
     public void Update(Cliente cliente)
     {
-        _clienteRepository.MapUpdateCliente(cliente);
+        _clienteRepository.UpdateCliente(cliente);
     }
 
     public void Delete(int id)
     {
-        _clienteRepository.MapDeleteCliente(id);
+        _clienteRepository.DeleteCliente(id);
     }
 
     public Cliente GetById(int id)
     {
-        return _clienteRepository.MapGetCliente(id);
+        return _clienteRepository.GetClienteById(id);
     }
 
     public IEnumerable<Cliente> GetAll()
     {
-        return _clienteRepository.MapGetAllClientes();
+        return _clienteRepository.GetAllClientes();
     }
 }
