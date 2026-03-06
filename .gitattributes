@@ -1,0 +1,30 @@
+# Normalização automática de finais de linha
+* text=auto
+
+# Arquivos de código C#
+*.cs text eol=lf
+*.csproj text eol=lf
+*.sln text eol=lf
+
+# Arquivos de configuração
+*.json text eol=lf
+*.xml text eol=lf
+*.config text eol=lf
+*.props text eol=lf
+*.targets text eol=lf
+
+# Scripts
+*.sh text eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Arquivos binários
+*.dll binary
+*.exe binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary

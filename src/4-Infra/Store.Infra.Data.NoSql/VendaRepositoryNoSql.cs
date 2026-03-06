@@ -4,12 +4,12 @@ using Store.Domain.Interfaces;
 using Store.Domain.Models;
 
 namespace Store.Infra.Data.NoSql;
-public class VendaRepository : IVendaRepository
+public class VendaRepositoryNoSql : IVendaRepository
 {
     private readonly ILiteCollection<Venda> _vendaCollection;
     private readonly ILiteDatabase _database;
 
-    public VendaRepository(ILiteDatabase database)
+    public VendaRepositoryNoSql(ILiteDatabase database)
     {
         _database = database;
         _vendaCollection = _database.GetCollection<Venda>("vendas");

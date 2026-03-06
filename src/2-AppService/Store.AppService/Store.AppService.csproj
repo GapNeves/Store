@@ -1,5 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <ItemGroup>
+    <ProjectReference Include="..\Store.AppService.Interfaces\Store.AppService.Interfaces.csproj" />
+    <ProjectReference Include="..\..\3-Domain\Store.Domain.Interfaces\Store.Domain.Interfaces.csproj" />
+    <ProjectReference Include="..\..\3-Domain\Store.Domain.Models\Store.Domain.Models.csproj" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

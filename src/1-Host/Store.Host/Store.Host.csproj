@@ -14,6 +14,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\3-Domain\Store.Domain.Interfaces\Store.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\..\4-Infra\Store.Infra.Data.NoSql\Store.Infra.Data.NoSql.csproj" />
+    <ProjectReference Include="..\..\2-AppService\Store.AppService.Interfaces\Store.AppService.Interfaces.csproj" />
+    <ProjectReference Include="..\..\2-AppService\Store.AppService\Store.AppService.csproj" />
+    <ProjectReference Include="..\..\3-Domain\Store.Domain.Models\Store.Domain.Models.csproj" />
   </ItemGroup>
 
 </Project>

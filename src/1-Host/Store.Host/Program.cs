@@ -1,9 +1,12 @@
 using LiteDB;
 using Store.Domain.Interfaces;
 using Store.Infra.Data.NoSql;
+using Store.AppService.Interfaces;
+using Store.AppService;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var databasePath = builder.Configuration["LiteDb:DatabasePath"] ?? "Data/Store.db";
@@ -20,9 +23,13 @@ var mapper = LiteDbConfig.ConfigureMapper();
 var connectionString = $"Filename={databasePath};Connection=shared";
 builder.Services.AddSingleton<ILiteDatabase>(new LiteDatabase(connectionString, mapper));
 
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
-builder.Services.AddScoped<IVendaRepository, VendaRepository>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepositoryNoSql>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepositoryNoSql>();
+builder.Services.AddScoped<IVendaRepository, VendaRepositoryNoSql>();
+
+builder.Services.AddScoped<IClienteAppService, ClienteAppService>();
+builder.Services.AddScoped<IProdutoAppService, ProdutoAppService>();
+builder.Services.AddScoped<IVendaAppService, VendaAppService>();
 
 var app = builder.Build();
 
@@ -32,5 +39,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.Run();
