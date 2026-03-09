@@ -13,20 +13,20 @@ public class ProdutoService
     public void ValidarEAdicionar(Produto produto)
     {
         if (string.IsNullOrWhiteSpace(produto.Nome))
-            throw new ArgumentException("Nome é obrigatório");
+            throw new ArgumentException("O nome do produto é obrigatório.");
 
         if (produto.Preco <= 0)
-            throw new ArgumentException("Preço deve ser maior que zero");
+            throw new ArgumentException("Preço deve ser maior que zero.");
 
         _produtoRepository.AddProduto(produto);
     }
     public void ValidarEAtualizar(Produto produto)
     {
         if (string.IsNullOrWhiteSpace(produto.Nome))
-            throw new ArgumentException("Nome é obrigatório");
+            throw new ArgumentException("O nome do produto é obrigatório.");
 
         if (produto.Preco <= 0)
-            throw new ArgumentException("Preço deve ser maior que zero");
+            throw new ArgumentException("Preço deve ser maior que zero.");
 
         _produtoRepository.UpdateProduto(produto);
     }

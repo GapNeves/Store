@@ -5,7 +5,7 @@ public interface IProdutoRepository
 {
     void AddProduto(Produto produto);
     void UpdateProduto(Produto produto);
-    void DeleteProduto(int id);
-    Produto GetProduto(int id);
+    void DeleteProduto(Guid id);
+    Produto GetProduto(Guid id);
     IEnumerable<Produto> GetAllProdutos();
 }

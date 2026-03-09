@@ -20,7 +20,7 @@ public class ProdutoRepositoryNoSql : IProdutoRepository
         _produtoCollection.Insert(produto);
     }
 
-    public void DeleteProduto(int id)
+    public void DeleteProduto(Guid id)
     {
         _produtoCollection.Delete(id);
     }
@@ -30,7 +30,7 @@ public class ProdutoRepositoryNoSql : IProdutoRepository
         return _produtoCollection.FindAll();
     }
 
-    public Produto GetProduto(int id)
+    public Produto GetProduto(Guid id)
     {
         return _produtoCollection.FindById(id);
     }
