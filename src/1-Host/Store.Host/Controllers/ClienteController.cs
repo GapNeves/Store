@@ -63,14 +63,21 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Update(Guid id, [FromBody] Cliente cliente)
     {
-        var clienteExistente = _clienteAppService.GetById(id);
+        try
+        {
+            var clienteExistente = _clienteAppService.GetById(id);
         
-        if (clienteExistente == null)
-            return NotFound(new { message = "Cliente não encontrado" });
+            if (clienteExistente == null)
+                return NotFound(new { message = "Cliente não encontrado" });
 
-        _clienteService.ValidarEAtualizar(cliente);
+            _clienteService.ValidarEAtualizar(cliente);
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpDelete("{id}")]
@@ -78,14 +85,21 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
     {
-        var cliente = _clienteAppService.GetById(id);
+        try
+        {
+            var cliente = _clienteAppService.GetById(id);
         
-        if (cliente == null)
-            return NotFound(new { message = "Cliente não encontrado" });
+            if (cliente == null)
+                return NotFound(new { message = "Cliente não encontrado" });
 
-        _clienteAppService.Delete(id);
+            _clienteAppService.Delete(id);
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }
  

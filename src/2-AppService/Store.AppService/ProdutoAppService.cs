@@ -18,11 +18,11 @@ public class ProdutoAppService : IProdutoAppService
     {
         _produtoRepository.UpdateProduto(produto);
     }
-    public void Delete(int id)
+    public void Delete(Guid id)
     {
         _produtoRepository.DeleteProduto(id);
     }
-    public Produto GetById(int id)
+    public Produto GetById(Guid id)
     {
         return _produtoRepository.GetProduto(id);
     }

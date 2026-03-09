@@ -5,7 +5,7 @@ public interface IProdutoAppService
 {
     void Add(Produto produto);
     void Update(Produto produto);
-    void Delete(int id);
-    Produto GetById(int id);
+    void Delete(Guid id);
+    Produto GetById(Guid id);
     IEnumerable<Produto> GetAll();
 }

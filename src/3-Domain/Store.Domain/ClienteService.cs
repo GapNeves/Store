@@ -16,7 +16,7 @@ public class ClienteService
     public void ValidarEAdicionar(Cliente cliente)
     {
         if (string.IsNullOrWhiteSpace(cliente.Nome))
-            throw new ArgumentException("Nome é obrigatório.");
+            throw new ArgumentException("Nome do cliente é obrigatório.");
 
         bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
@@ -36,10 +36,12 @@ public class ClienteService
     public void ValidarEAtualizar(Cliente cliente)
     {
         if (string.IsNullOrWhiteSpace(cliente.Nome))
-            throw new ArgumentException("Nome é obrigatório");
+            throw new ArgumentException("Nome do cliente é obrigatório");
 
-        if (string.IsNullOrWhiteSpace(cliente.Email))
-            throw new ArgumentException("Email é obrigatório");
+        bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+        if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
+            throw new ArgumentException("Email inválido, adicione um email válido.");
 
         _clienteRepository.UpdateCliente(cliente);
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
+using Store.Domain;
 using Store.Domain.Models;
 
 namespace Store.Host.Controllers;
@@ -9,10 +10,12 @@ namespace Store.Host.Controllers;
 public class ProdutoController : ControllerBase
 {
     private readonly IProdutoAppService _produtoAppService;
+    private readonly ProdutoService _produtoService;
 
-    public ProdutoController(IProdutoAppService produtoAppService)
+    public ProdutoController(IProdutoAppService produtoAppService, ProdutoService produtoService)
     {
         _produtoAppService = produtoAppService;
+        _produtoService = produtoService;
     }
 
     [HttpGet]
@@ -26,7 +29,7 @@ public class ProdutoController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Produto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetById(int id)
+    public IActionResult GetById(Guid id)
     {
         var produto = _produtoAppService.GetById(id);
         
@@ -40,38 +43,48 @@ public class ProdutoController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] Produto produto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        try
+        {
+            produto.Id = Guid.NewGuid();
+            _produtoService.ValidarEAdicionar(produto);
 
-        produto.Id = Guid.NewGuid();
-        _produtoAppService.Add(produto);
-
-        return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
+            return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Update(int id, [FromBody] Produto produto)
+    public IActionResult Update(Guid id, [FromBody] Produto produto)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        var produtoExistente = _produtoAppService.GetById(id);
+        try
+        {
+            var produtoExistente = _produtoAppService.GetById(id);
 
-        if (produtoExistente == null)
-            return NotFound(new { message = "Produto não encontrado" });
+            if (produtoExistente == null)
+                return NotFound(new { message = "Produto não encontrado" });
+
+            _produtoService.ValidarEAtualizar(produto);
         
-        _produtoAppService.Update(produto);
-        
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+
+
     }
 
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(Guid id)
     {
         var produto = _produtoAppService.GetById(id);
 
