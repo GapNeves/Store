@@ -5,7 +5,8 @@ public interface IClienteRepository
 {
     void AddCliente(Cliente cliente);
     void UpdateCliente(Cliente cliente);
-    void DeleteCliente(int id);
-    Cliente GetClienteById(int id);
+    void DeleteCliente(Guid id);
+    Cliente GetClienteById(Guid id);
     IEnumerable<Cliente> GetAllClientes();
+    Cliente GetClienteByCpf(string cpf);
 }

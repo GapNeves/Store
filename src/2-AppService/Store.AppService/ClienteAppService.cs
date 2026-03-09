@@ -23,12 +23,12 @@ public class ClienteAppService : IClienteAppService
         _clienteRepository.UpdateCliente(cliente);
     }
 
-    public void Delete(int id)
+    public void Delete(Guid id)
     {
         _clienteRepository.DeleteCliente(id);
     }
 
-    public Cliente GetById(int id)
+    public Cliente GetById(Guid id)
     {
         return _clienteRepository.GetClienteById(id);
     }

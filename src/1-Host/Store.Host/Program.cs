@@ -3,6 +3,8 @@ using Store.Domain.Interfaces;
 using Store.Infra.Data.NoSql;
 using Store.AppService.Interfaces;
 using Store.AppService;
+using Store.Host;
+using Store.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,12 +33,18 @@ builder.Services.AddScoped<IClienteAppService, ClienteAppService>();
 builder.Services.AddScoped<IProdutoAppService, ProdutoAppService>();
 builder.Services.AddScoped<IVendaAppService, VendaAppService>();
 
+builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<ProdutoService>();
+builder.Services.AddScoped<VendaService>();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 
