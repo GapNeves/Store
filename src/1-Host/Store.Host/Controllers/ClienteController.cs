@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
+using Store.Domain;
 using Store.Domain.Models;
 
 namespace Store.Host.Controllers;
@@ -9,10 +10,12 @@ namespace Store.Host.Controllers;
 public class ClienteController : ControllerBase
 {
     private readonly IClienteAppService _clienteAppService;
+    private readonly ClienteService _clienteService;
 
-    public ClienteController(IClienteAppService clienteAppService)
+    public ClienteController(IClienteAppService clienteAppService, ClienteService clienteService)
     {
         _clienteAppService = clienteAppService;
+        _clienteService = clienteService;
     }
 
     [HttpGet]
@@ -26,7 +29,7 @@ public class ClienteController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Cliente), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult GetById(int id)
+    public IActionResult GetById(Guid id)
     {
         var cliente = _clienteAppService.GetById(id);
         
@@ -41,30 +44,31 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] Cliente cliente)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        try
+        {
+            cliente.Id = Guid.NewGuid();
+            _clienteService.ValidarEAdicionar(cliente);
 
-        cliente.Id = Guid.NewGuid();
-        _clienteAppService.Add(cliente);
-
-        return CreatedAtAction(nameof(GetById), new { id = cliente.Cpf }, cliente);
+            return CreatedAtAction(nameof(GetById), new { id = cliente.Id }, cliente);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Update(int id, [FromBody] Cliente cliente)
+    public IActionResult Update(Guid id, [FromBody] Cliente cliente)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var clienteExistente = _clienteAppService.GetById(id);
         
         if (clienteExistente == null)
             return NotFound(new { message = "Cliente não encontrado" });
 
-        _clienteAppService.Update(cliente);
+        _clienteService.ValidarEAtualizar(cliente);
 
         return NoContent();
     }
@@ -72,7 +76,7 @@ public class ClienteController : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Delete(int id)
+    public IActionResult Delete(Guid id)
     {
         var cliente = _clienteAppService.GetById(id);
         

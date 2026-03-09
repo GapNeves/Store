@@ -17,26 +17,26 @@ public class ProdutoRepositoryNoSql : IProdutoRepository
 
     public void AddProduto(Produto produto)
     {
-        throw new NotImplementedException();
+        _produtoCollection.Insert(produto);
     }
 
     public void DeleteProduto(int id)
     {
-        throw new NotImplementedException();
+        _produtoCollection.Delete(id);
     }
 
     public IEnumerable<Produto> GetAllProdutos()
     {
-        throw new NotImplementedException();
+        return _produtoCollection.FindAll();
     }
 
     public Produto GetProduto(int id)
     {
-        throw new NotImplementedException();
+        return _produtoCollection.FindById(id);
     }
 
     public void UpdateProduto(Produto produto)
     {
-        throw new NotImplementedException();
+        _produtoCollection.Update(produto);
     }
 }

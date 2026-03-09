@@ -14,28 +14,33 @@ public class ClienteRepositoryNoSql : IClienteRepository
         _clienteCollection = _database.GetCollection<Cliente>("clientes");
     }
 
-    public void MapAddCliente(Cliente cliente)
+    public void AddCliente(Cliente cliente)
     {
-        throw new NotImplementedException();
+        _clienteCollection.Insert(cliente);
     }
 
-    public void MapDeleteCliente(int id)
+    public void DeleteCliente(Guid id)
     {
-        throw new NotImplementedException();
+        _clienteCollection.Delete(id);
     }
 
-    public IEnumerable<Cliente> MapGetAllClientes()
+    public IEnumerable<Cliente> GetAllClientes()
     {
-        throw new NotImplementedException();
+        return _clienteCollection.FindAll();
     }
 
-    public Cliente MapGetCliente(int id)
+    public Cliente GetClienteById(Guid id)
     {
-        throw new NotImplementedException();
+        return _clienteCollection.FindById(id);
     }
 
-    public void MapUpdateCliente(Cliente cliente)
+    public void UpdateCliente(Cliente cliente)
     {
-        throw new NotImplementedException();
+        _clienteCollection.Update(cliente);
+    }
+
+    public Cliente GetClienteByCpf(string cpf)
+    {
+        return _clienteCollection.FindOne(c => c.Cpf == cpf);
     }
 }

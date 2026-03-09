@@ -14,19 +14,21 @@ public class VendaRepositoryNoSql : IVendaRepository
         _database = database;
         _vendaCollection = _database.GetCollection<Venda>("vendas");
     }
-
-    public void GetVenda(int id)
-    {
-        throw new NotImplementedException();
-    }
-
     public void IniciaVenda(Venda venda)
     {
-        throw new NotImplementedException();
+        _vendaCollection.Insert(venda);
+    }
+    public void UpdateVenda(Venda venda)
+    {
+        _vendaCollection.Update(venda);
+    }
+    public Venda GetVendaById(int id)
+    {
+        return _vendaCollection.FindById(id);
     }
 
-    public void UpdateVenda(int id)
+    public IEnumerable<Venda> GetAllVendas()
     {
-        throw new NotImplementedException();
+        return _vendaCollection.FindAll();
     }
 }
