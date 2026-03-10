@@ -1,5 +1,4 @@
-﻿
-using LiteDB;
+﻿using LiteDB;
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
 

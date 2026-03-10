@@ -6,6 +6,6 @@ public interface IVendaAppService
 {
     void Add(Venda venda);
     void Update(Venda venda);
-    Venda GetById(int id);
+    Venda GetById(Guid id);
     IEnumerable<Venda> GetAll();
 }

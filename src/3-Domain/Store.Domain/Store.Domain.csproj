@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Store.Shared\Store.Shared.csproj" />
     <ProjectReference Include="..\Store.Domain.Interfaces\Store.Domain.Interfaces.csproj" />
     <ProjectReference Include="..\Store.Domain.Models\Store.Domain.Models.csproj" />
   </ItemGroup>

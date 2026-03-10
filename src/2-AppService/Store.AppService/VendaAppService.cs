@@ -23,7 +23,7 @@ public class VendaAppService : IVendaAppService
         _vendaRepository.UpdateVenda(venda);
     }
 
-    public Venda GetById(int id)
+    public Venda GetById(Guid id)
     {
         return _vendaRepository.GetVendaById(id);
     }

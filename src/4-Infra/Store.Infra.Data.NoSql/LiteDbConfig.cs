@@ -19,8 +19,7 @@ public static class LiteDbConfig
 
         // Configurar Venda
         mapper.Entity<Venda>()
-            .Id(x => x.Id)
-            .DbRef(x => x.CpfCliente, "clientes");
+            .Id(x => x.Id);
 
         // Configurar VendaProduto (embedded document)
         mapper.Entity<VendaProduto>();

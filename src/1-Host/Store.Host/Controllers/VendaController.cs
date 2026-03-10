@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
+using Store.Domain;
 using Store.Domain.Models;
 
 namespace Store.Host.Controllers;
@@ -9,10 +10,13 @@ namespace Store.Host.Controllers;
 public class VendaController : ControllerBase
 {
     private readonly IVendaAppService _vendaAppService;
+    private readonly VendaService _vendaService;
 
-    public VendaController(IVendaAppService vendaAppService)
+    public VendaController(IVendaAppService vendaAppService, VendaService vendaservice)
     {
         _vendaAppService = vendaAppService;
+        _vendaService = vendaservice;
+
     }
 
     [HttpGet]
@@ -25,13 +29,21 @@ public class VendaController : ControllerBase
 
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Venda), StatusCodes.Status200OK)]
-    public IActionResult GetById(int id)
+    public IActionResult GetById(Guid id)
     {
-        var venda = _vendaAppService.GetById(id);
-        
-        if (venda == null)
-            return NotFound(new { message = "Venda não encontrada" });
-        return Ok(venda);
+        try
+        {
+            var venda = _vendaAppService.GetById(id);
+
+            if (venda == null)
+                return NotFound(new { message = "Venda não encontrada" });
+
+            return Ok(venda);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpPost]
@@ -39,35 +51,49 @@ public class VendaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] Venda venda)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        venda.Id = Guid.NewGuid();
+            venda.Id = Guid.NewGuid();
 
-        _vendaAppService.Add(venda);
+            _vendaAppService.Add(venda);
 
-        return CreatedAtAction(nameof(GetById), new { id = venda.Id }, venda);
+            return CreatedAtAction(nameof(GetById), new { id = venda.Id }, venda);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public IActionResult Update(int id, [FromBody] Venda venda)
+    public IActionResult Update(Guid id, [FromBody] Venda venda)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-        var existingVenda = _vendaAppService.GetById(id);
+            var existingVenda = _vendaAppService.GetById(id);
 
-        if (existingVenda == null)
-            return NotFound(new { message = "Venda não encontrada" });
+            if (existingVenda == null)
+                return NotFound(new { message = "Venda não encontrada" });
 
-        venda.Id = existingVenda.Id;
+            venda.Id = existingVenda.Id;
 
-        _vendaAppService.Update(venda);
+            _vendaAppService.Update(venda);
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
 }

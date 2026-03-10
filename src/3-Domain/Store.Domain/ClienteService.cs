@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
+using Store.Shared;
 
 namespace Store.Domain;
 
@@ -23,8 +24,8 @@ public class ClienteService
         if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
             throw new ArgumentException("Email inválido, adicione um email válido.");
 
-        if (string.IsNullOrWhiteSpace(cliente.Cpf) || cliente.Cpf.Length != 11)
-            throw new ArgumentException("CPF do cliente é obrigatório e deve ter 11 dígitos.");
+        if (string.IsNullOrWhiteSpace(cliente.Cpf) || !ValidarCpf.IsCpf(cliente.Cpf))
+            throw new ArgumentException("CPF inválido, informe um CPF válido.");
 
         Cliente clienteExistente = _clienteRepository.GetClienteByCpf(cliente.Cpf);
         if (clienteExistente != null)

@@ -1,5 +1,4 @@
 ﻿using LiteDB;
-
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
 
@@ -22,7 +21,7 @@ public class VendaRepositoryNoSql : IVendaRepository
     {
         _vendaCollection.Update(venda);
     }
-    public Venda GetVendaById(int id)
+    public Venda GetVendaById(Guid id)
     {
         return _vendaCollection.FindById(id);
     }

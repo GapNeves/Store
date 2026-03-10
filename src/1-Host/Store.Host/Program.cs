@@ -1,10 +1,13 @@
+using System.Text;
 using LiteDB;
-using Store.Domain.Interfaces;
-using Store.Infra.Data.NoSql;
-using Store.AppService.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Store.AppService;
-using Store.Host;
+using Store.AppService.Interfaces;
 using Store.Domain;
+using Store.Domain.Interfaces;
+using Store.Host;
+using Store.Infra.Data.NoSql;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +41,23 @@ builder.Services.AddScoped<ProdutoService>();
 builder.Services.AddScoped<VendaService>();
 
 var app = builder.Build();
+
+var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidateLifetime = true, // Verifica se o token expirou
+            ClockSkew = TimeSpan.Zero // Remove tempo extra de tolerância
+        };
+    });
 
 if (app.Environment.IsDevelopment())
 {
