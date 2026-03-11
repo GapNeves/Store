@@ -1,4 +1,5 @@
-﻿using Store.AppService.Interfaces;
+﻿
+using Store.AppService.Interfaces;
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
 
@@ -6,30 +7,70 @@ namespace Store.AppService;
 
 public class VendaAppService : IVendaAppService
 {
-    private readonly IVendaRepository _vendaRepository;
+    private readonly IVendaService _vendaService;
 
-    public VendaAppService(IVendaRepository vendaRepository)
+    public VendaAppService(IVendaService vendaService)
     {
-        _vendaRepository = vendaRepository;
+        _vendaService = vendaService;
     }
 
     public void Add(Venda venda)
     {
-        _vendaRepository.IniciaVenda(venda);
+        try
+        {
+            _vendaService.IniciaVenda(venda);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void Update(Venda venda)
     {
-        _vendaRepository.UpdateVenda(venda);
+        try
+        {
+            _vendaService.UpdateVenda(venda);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public Venda GetById(Guid id)
     {
-        return _vendaRepository.GetVendaById(id);
+        try
+        {
+            return _vendaService.GetVendaById(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public IEnumerable<Venda> GetAll()
     {
-        return _vendaRepository.GetAllVendas();
+        try
+        {
+            return _vendaService.GetAllVendas();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public IEnumerable<Venda> GetByCpf(string cpf)
+    {
+        try
+        {
+            return _vendaService.GetAllVendas().Where(v => v.CpfCliente == cpf);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 }

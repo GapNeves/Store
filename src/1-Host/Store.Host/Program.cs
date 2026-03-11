@@ -8,6 +8,7 @@ using Store.Domain;
 using Store.Domain.Interfaces;
 using Store.Host;
 using Store.Infra.Data.NoSql;
+using Store.Infra.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,21 +29,23 @@ var mapper = LiteDbConfig.ConfigureMapper();
 var connectionString = $"Filename={databasePath};Connection=shared";
 builder.Services.AddSingleton<ILiteDatabase>(new LiteDatabase(connectionString, mapper));
 
+// Repository
 builder.Services.AddScoped<IClienteRepository, ClienteRepositoryNoSql>();
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepositoryNoSql>();
 builder.Services.AddScoped<IVendaRepository, VendaRepositoryNoSql>();
 
+// AppService
 builder.Services.AddScoped<IClienteAppService, ClienteAppService>();
 builder.Services.AddScoped<IProdutoAppService, ProdutoAppService>();
 builder.Services.AddScoped<IVendaAppService, VendaAppService>();
 
-builder.Services.AddScoped<ClienteService>();
-builder.Services.AddScoped<ProdutoService>();
-builder.Services.AddScoped<VendaService>();
-
-var app = builder.Build();
+// Service
+builder.Services.AddScoped<IClienteService, ClienteService>();
+builder.Services.AddScoped<IProdutoService, ProdutoService>();
+builder.Services.AddScoped<IVendaService, VendaService>();
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -59,6 +62,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+var app = builder.Build();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -67,6 +72,9 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

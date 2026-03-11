@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
-using Store.Domain;
 using Store.Domain.Models;
 
 namespace Store.Host.Controllers;
@@ -10,12 +9,10 @@ namespace Store.Host.Controllers;
 public class VendaController : ControllerBase
 {
     private readonly IVendaAppService _vendaAppService;
-    private readonly VendaService _vendaService;
 
-    public VendaController(IVendaAppService vendaAppService, VendaService vendaservice)
+    public VendaController(IVendaAppService vendaAppService)
     {
         _vendaAppService = vendaAppService;
-        _vendaService = vendaservice;
 
     }
 
@@ -23,8 +20,15 @@ public class VendaController : ControllerBase
     [ProducesResponseType(typeof(IEnumerable<Venda>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
-        var vendas = _vendaAppService.GetAll();
-        return Ok(vendas);
+        try
+        {
+            var vendas = _vendaAppService.GetAll();
+            return Ok(vendas);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpGet("{id}")]
@@ -39,6 +43,21 @@ public class VendaController : ControllerBase
                 return NotFound(new { message = "Venda não encontrada" });
 
             return Ok(venda);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
+    }
+
+    [HttpGet("cliente/{cpf}")]
+    [ProducesResponseType(typeof(IEnumerable<Venda>), StatusCodes.Status200OK)]
+    public IActionResult GetVendasByCpf(string cpf)
+    {
+        try
+        {
+            var vendas = _vendaAppService.GetByCpf(cpf);
+            return Ok(vendas);
         }
         catch (Exception ex)
         {

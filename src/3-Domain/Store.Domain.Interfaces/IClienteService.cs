@@ -1,7 +1,7 @@
 ﻿using Store.Domain.Models;
 
 namespace Store.Domain.Interfaces;
-public interface IClienteRepository
+public interface IClienteService
 {
     void AddCliente(Cliente cliente);
     void UpdateCliente(Cliente cliente);

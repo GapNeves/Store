@@ -9,4 +9,5 @@ public interface IClienteAppService
     void Delete(Guid id);
     Cliente GetById(Guid id);
     IEnumerable<Cliente> GetAll();
+    Cliente GetByCpf(string cpf);
 }

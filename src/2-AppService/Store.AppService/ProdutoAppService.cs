@@ -5,29 +5,64 @@ using Store.Domain.Models;
 namespace Store.AppService;
 public class ProdutoAppService : IProdutoAppService
 {
-    private readonly IProdutoRepository _produtoRepository;
-    public ProdutoAppService(IProdutoRepository produtoRepository)
+    private readonly IProdutoService _produtoService;
+    public ProdutoAppService(IProdutoService produtoRepository)
     {
-        _produtoRepository = produtoRepository;
+        _produtoService = produtoRepository;
     }
     public void Add(Produto produto)
     {
-        _produtoRepository.AddProduto(produto);
+        try
+        {
+            _produtoService.AddProduto(produto);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
     public void Update(Produto produto)
     {
-        _produtoRepository.UpdateProduto(produto);
+        try
+        {
+            _produtoService.UpdateProduto(produto);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
     public void Delete(Guid id)
     {
-        _produtoRepository.DeleteProduto(id);
+        try
+        {
+            _produtoService.DeleteProduto(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
     public Produto GetById(Guid id)
     {
-        return _produtoRepository.GetProduto(id);
+        try
+        {
+            return _produtoService.GetProduto(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
     public IEnumerable<Produto> GetAll()
     {
-        return _produtoRepository.GetAllProdutos();
+        try
+        {
+            return _produtoService.GetAllProdutos();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 }

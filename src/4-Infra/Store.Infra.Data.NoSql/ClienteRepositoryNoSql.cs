@@ -1,6 +1,6 @@
 ﻿using LiteDB;
-using Store.Domain.Interfaces;
 using Store.Domain.Models;
+using Store.Infra.Interfaces;
 
 namespace Store.Infra.Data.NoSql;
 public class ClienteRepositoryNoSql : IClienteRepository
@@ -16,31 +16,73 @@ public class ClienteRepositoryNoSql : IClienteRepository
 
     public void AddCliente(Cliente cliente)
     {
-        _clienteCollection.Insert(cliente);
+        try
+        {
+            _clienteCollection.Insert(cliente);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void DeleteCliente(Guid id)
     {
-        _clienteCollection.Delete(id);
+        try
+        {
+            _clienteCollection.Delete(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public IEnumerable<Cliente> GetAllClientes()
     {
-        return _clienteCollection.FindAll();
+        try
+        {
+            return _clienteCollection.FindAll();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public Cliente GetClienteById(Guid id)
     {
-        return _clienteCollection.FindById(id);
+        try
+        {
+            return _clienteCollection.FindById(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void UpdateCliente(Cliente cliente)
     {
-        _clienteCollection.Update(cliente);
+        try
+        {
+            _clienteCollection.Update(cliente);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public Cliente GetClienteByCpf(string cpf)
     {
-        return _clienteCollection.FindOne(c => c.Cpf == cpf);
+        try
+        {
+            return _clienteCollection.FindOne(c => c.Cpf == cpf);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 }

@@ -12,18 +12,24 @@ public class ProdutoController : ControllerBase
     private readonly IProdutoAppService _produtoAppService;
     private readonly ProdutoService _produtoService;
 
-    public ProdutoController(IProdutoAppService produtoAppService, ProdutoService produtoService)
+    public ProdutoController(IProdutoAppService produtoAppService)
     {
         _produtoAppService = produtoAppService;
-        _produtoService = produtoService;
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Produto>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
-        var produtos = _produtoAppService.GetAll();
-        return Ok(produtos);
+        try
+        {
+            var produtos = _produtoAppService.GetAll();
+            return Ok(produtos);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpGet("{id}")]
@@ -31,11 +37,19 @@ public class ProdutoController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
     {
-        var produto = _produtoAppService.GetById(id);
-        
-        if (produto == null)
-            return NotFound(new { message = "Produto não encontrado" });
-        return Ok(produto);
+        try
+        {
+            var produto = _produtoAppService.GetById(id);
+
+            if (produto == null)
+                return NotFound(new { message = "Produto não encontrado" });
+
+            return Ok(produto);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpPost]
@@ -46,13 +60,13 @@ public class ProdutoController : ControllerBase
         try
         {
             produto.Id = Guid.NewGuid();
-            _produtoService.ValidarEAdicionar(produto);
+            _produtoAppService.Add(produto);
 
             return CreatedAtAction(nameof(GetById), new { id = produto.Id }, produto);
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
         }
     }
 
@@ -69,16 +83,14 @@ public class ProdutoController : ControllerBase
             if (produtoExistente == null)
                 return NotFound(new { message = "Produto não encontrado" });
 
-            _produtoService.ValidarEAtualizar(produto);
-        
+            _produtoAppService.Update(produto);
+
             return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
         }
-
-
     }
 
     [HttpDelete("{id}")]
@@ -86,13 +98,20 @@ public class ProdutoController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
     {
-        var produto = _produtoAppService.GetById(id);
+        try
+        {
+            var produto = _produtoAppService.GetById(id);
 
-        if (produto == null)
-            return NotFound(new { message = "Produto não encontrado" });
-        
-        _produtoAppService.Delete(id);
-        
-        return NoContent();
+            if (produto == null)
+                return NotFound(new { message = "Produto não encontrado" });
+
+            _produtoAppService.Delete(id);
+
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 }

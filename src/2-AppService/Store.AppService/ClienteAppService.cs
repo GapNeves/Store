@@ -6,35 +6,82 @@ namespace Store.AppService;
 
 public class ClienteAppService : IClienteAppService
 {
-    private readonly IClienteRepository _clienteRepository;
+    private readonly IClienteService _clienteService;
 
-    public ClienteAppService(IClienteRepository clienteRepository)
+    public ClienteAppService(IClienteService clienteService)
     {
-        _clienteRepository = clienteRepository;
+        _clienteService = clienteService;
     }
 
     public void Add(Cliente cliente)
     {
-        _clienteRepository.AddCliente(cliente);
+        try
+        {
+            _clienteService.AddCliente(cliente);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void Update(Cliente cliente)
     {
-        _clienteRepository.UpdateCliente(cliente);
+        try
+        {
+            _clienteService.UpdateCliente(cliente);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void Delete(Guid id)
     {
-        _clienteRepository.DeleteCliente(id);
+        try
+        {
+            _clienteService.DeleteCliente(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public Cliente GetById(Guid id)
     {
-        return _clienteRepository.GetClienteById(id);
+        try
+        {
+            return _clienteService.GetClienteById(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public IEnumerable<Cliente> GetAll()
     {
-        return _clienteRepository.GetAllClientes();
+        try
+        {
+            return _clienteService.GetAllClientes();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public Cliente GetByCpf(string cpf)
+    {
+        try
+        {
+            return _clienteService.GetClienteByCpf(cpf);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 }
