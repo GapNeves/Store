@@ -1,48 +1,112 @@
 ﻿using System.Text.RegularExpressions;
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
+using Store.Infra.Interfaces;
+using Store.Shared;
 
 namespace Store.Domain;
 
-public class ClienteService
+public class ClienteService : IClienteService
 {
-    private readonly IClienteRepository _clienteRepository;
+    private readonly IClienteRepository _clienteRepositoryNoSql;
 
     public ClienteService(IClienteRepository clienteRepository)
     {
-        _clienteRepository = clienteRepository;
+        _clienteRepositoryNoSql = clienteRepository;
     }
 
-    public void ValidarEAdicionar(Cliente cliente)
+    public void AddCliente(Cliente cliente)
     {
-        if (string.IsNullOrWhiteSpace(cliente.Nome))
-            throw new ArgumentException("Nome do cliente é obrigatório.");
+        try
+        {
+            if (string.IsNullOrWhiteSpace(cliente.Nome))
+                throw new ArgumentException("Nome do cliente é obrigatório.");
+
+            bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+
+            if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
+                throw new ArgumentException("Email inválido, adicione um email válido.");
+
+            if (string.IsNullOrWhiteSpace(cliente.Cpf) || !ValidarCpf.IsCpf(cliente.Cpf))
+                throw new ArgumentException("CPF inválido, informe um CPF válido.");
+
+            Cliente clienteExistente = _clienteRepositoryNoSql.GetClienteByCpf(cliente.Cpf);
+            if (clienteExistente != null)
+                throw new ArgumentException("CPF já cadastrado no sistema.");
+
+            _clienteRepositoryNoSql.AddCliente(cliente);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public void DeleteCliente(Guid id)
+    {
+        try
+        {
+            _clienteRepositoryNoSql.DeleteCliente(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public IEnumerable<Cliente> GetAllClientes()
+    {
+        try
+        {
+            return _clienteRepositoryNoSql.GetAllClientes();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public Cliente GetClienteByCpf(string cpf)
+    {
+        try
+        {
+            return _clienteRepositoryNoSql.GetClienteByCpf(cpf);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public Cliente GetClienteById(Guid id)
+    {
+        try
+        {
+            return _clienteRepositoryNoSql.GetClienteById(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public void UpdateCliente(Cliente cliente)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(cliente.Nome))
+                throw new ArgumentException("Nome do cliente é obrigatório");
 
         bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
         if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
             throw new ArgumentException("Email inválido, adicione um email válido.");
 
-        if (string.IsNullOrWhiteSpace(cliente.Cpf) || cliente.Cpf.Length != 11)
-            throw new ArgumentException("CPF do cliente é obrigatório e deve ter 11 dígitos.");
-
-        Cliente clienteExistente = _clienteRepository.GetClienteByCpf(cliente.Cpf);
-        if (clienteExistente != null)
-            throw new ArgumentException("CPF já cadastrado no sistema.");
-
-        _clienteRepository.AddCliente(cliente);
-    }
-
-    public void ValidarEAtualizar(Cliente cliente)
-    {
-        if (string.IsNullOrWhiteSpace(cliente.Nome))
-            throw new ArgumentException("Nome do cliente é obrigatório");
-
-        bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
-
-        if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
-            throw new ArgumentException("Email inválido, adicione um email válido.");
-
-        _clienteRepository.UpdateCliente(cliente);
+        _clienteRepositoryNoSql.UpdateCliente(cliente);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }   
     }
 }

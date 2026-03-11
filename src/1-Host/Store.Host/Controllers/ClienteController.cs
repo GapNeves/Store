@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
-using Store.Domain;
 using Store.Domain.Models;
 
 namespace Store.Host.Controllers;
@@ -10,20 +9,25 @@ namespace Store.Host.Controllers;
 public class ClienteController : ControllerBase
 {
     private readonly IClienteAppService _clienteAppService;
-    private readonly ClienteService _clienteService;
 
-    public ClienteController(IClienteAppService clienteAppService, ClienteService clienteService)
+    public ClienteController(IClienteAppService clienteAppService)
     {
         _clienteAppService = clienteAppService;
-        _clienteService = clienteService;
     }
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<Cliente>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
-        var clientes = _clienteAppService.GetAll();
-        return Ok(clientes);
+        try
+        {
+            var clientes = _clienteAppService.GetAll();
+            return Ok(clientes);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpGet("{id}")]
@@ -31,12 +35,39 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
     {
-        var cliente = _clienteAppService.GetById(id);
-        
-        if (cliente == null)
-            return NotFound(new { message = "Cliente não encontrado" });
+        try
+        {
+            var cliente = _clienteAppService.GetById(id);
 
-        return Ok(cliente);
+            if (cliente == null)
+                return NotFound(new { message = "Cliente não encontrado" });
+
+            return Ok(cliente);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
+    }
+
+    [HttpGet("cpf/{cpf}")]
+    [ProducesResponseType(typeof(Cliente), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public IActionResult GetByCpf(string cpf)
+    {
+        try
+        {
+            var cliente = _clienteAppService.GetByCpf(cpf);
+
+            if (cliente == null)
+                return NotFound(new { message = "Cliente não encontrado" });
+
+            return Ok(cliente);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
+        }
     }
 
     [HttpPost]
@@ -47,13 +78,13 @@ public class ClienteController : ControllerBase
         try
         {
             cliente.Id = Guid.NewGuid();
-            _clienteService.ValidarEAdicionar(cliente);
+            _clienteAppService.Add(cliente);
 
             return CreatedAtAction(nameof(GetById), new { id = cliente.Id }, cliente);
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
         }
     }
 
@@ -70,13 +101,13 @@ public class ClienteController : ControllerBase
             if (clienteExistente == null)
                 return NotFound(new { message = "Cliente não encontrado" });
 
-            _clienteService.ValidarEAtualizar(cliente);
+            _clienteAppService.Update(cliente);
 
             return NoContent();
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
         }
     }
 
@@ -98,7 +129,7 @@ public class ClienteController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Erro ao processar a solicitação", details = ex.Message });
         }
     }
 }

@@ -1,7 +1,6 @@
-﻿
-using LiteDB;
-using Store.Domain.Interfaces;
+﻿using LiteDB;
 using Store.Domain.Models;
+using Store.Infra.Interfaces;
 
 namespace Store.Infra.Data.NoSql;
 public class ProdutoRepositoryNoSql : IProdutoRepository
@@ -17,26 +16,61 @@ public class ProdutoRepositoryNoSql : IProdutoRepository
 
     public void AddProduto(Produto produto)
     {
-        _produtoCollection.Insert(produto);
+        try
+        {
+            _produtoCollection.Insert(produto);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void DeleteProduto(Guid id)
     {
-        _produtoCollection.Delete(id);
+        try
+        {
+            _produtoCollection.Delete(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public IEnumerable<Produto> GetAllProdutos()
     {
-        return _produtoCollection.FindAll();
+        try
+        {
+            return _produtoCollection.FindAll();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public Produto GetProduto(Guid id)
     {
-        return _produtoCollection.FindById(id);
+        try
+        {
+            return _produtoCollection.FindById(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public void UpdateProduto(Produto produto)
     {
-        _produtoCollection.Update(produto);
+        try
+        {
+            _produtoCollection.Update(produto);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 }

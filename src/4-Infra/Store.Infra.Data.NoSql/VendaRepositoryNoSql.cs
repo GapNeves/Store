@@ -1,7 +1,6 @@
 ﻿using LiteDB;
-
-using Store.Domain.Interfaces;
 using Store.Domain.Models;
+using Store.Infra.Interfaces;
 
 namespace Store.Infra.Data.NoSql;
 public class VendaRepositoryNoSql : IVendaRepository
@@ -16,19 +15,59 @@ public class VendaRepositoryNoSql : IVendaRepository
     }
     public void IniciaVenda(Venda venda)
     {
-        _vendaCollection.Insert(venda);
+        try
+        {
+            _vendaCollection.Insert(venda);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
     public void UpdateVenda(Venda venda)
     {
-        _vendaCollection.Update(venda);
+        try
+        {
+            _vendaCollection.Update(venda);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
-    public Venda GetVendaById(int id)
+    public Venda GetVendaById(Guid id)
     {
-        return _vendaCollection.FindById(id);
+        try
+        {
+            return _vendaCollection.FindById(id);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 
     public IEnumerable<Venda> GetAllVendas()
     {
-        return _vendaCollection.FindAll();
+        try
+        {
+            return _vendaCollection.FindAll();
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
+    }
+
+    public IEnumerable<Venda> GetVendasByCpf(string cpf)
+    {
+        try
+        {
+            return _vendaCollection.Find(v => v.CpfCliente == cpf);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message, ex);
+        }
     }
 }
