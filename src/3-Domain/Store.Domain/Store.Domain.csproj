@@ -1,6 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\4-Infra\Store.Infra.Data.NoSql\Store.Infra.Data.NoSql.csproj" />
     <ProjectReference Include="..\..\Shared\Store.Shared\Store.Shared.csproj" />
     <ProjectReference Include="..\Store.Domain.Interfaces\Store.Domain.Interfaces.csproj" />

@@ -38,11 +38,13 @@ builder.Services.AddScoped<IVendaRepository, VendaRepositoryNoSql>();
 builder.Services.AddScoped<IClienteAppService, ClienteAppService>();
 builder.Services.AddScoped<IProdutoAppService, ProdutoAppService>();
 builder.Services.AddScoped<IVendaAppService, VendaAppService>();
+builder.Services.AddScoped<ILoginAppService, LoginAppService>();
 
 // Service
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IProdutoService, ProdutoService>();
 builder.Services.AddScoped<IVendaService, VendaService>();
+builder.Services.AddScoped<ILoginService, LoginService>();
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 
