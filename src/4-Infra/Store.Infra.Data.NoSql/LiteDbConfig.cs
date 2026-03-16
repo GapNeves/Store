@@ -9,6 +9,18 @@ public static class LiteDbConfig
     {
         var mapper = new BsonMapper();
 
+        mapper.RegisterType<decimal>(
+            serialize: value => new BsonValue((double)value),
+            deserialize: bson => bson.RawValue switch
+            {
+                double d => (decimal)d,
+                int i => (decimal)i,
+                long l => (decimal)l,
+                decimal dec => dec,
+                _ => Convert.ToDecimal(bson.RawValue)
+            }
+        );
+
         // Configurar Cliente
         mapper.Entity<Cliente>()
             .Id(x => x.Id);

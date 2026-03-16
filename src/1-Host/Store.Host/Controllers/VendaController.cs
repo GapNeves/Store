@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
 using Store.AppService.Interfaces;
 using Store.Domain.Models;
 
@@ -17,6 +19,7 @@ public class VendaController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(IEnumerable<Venda>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
@@ -32,6 +35,7 @@ public class VendaController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(typeof(Venda), StatusCodes.Status200OK)]
     public IActionResult GetById(Guid id)
     {
@@ -51,6 +55,7 @@ public class VendaController : ControllerBase
     }
 
     [HttpGet("cliente/{cpf}")]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(typeof(IEnumerable<Venda>), StatusCodes.Status200OK)]
     public IActionResult GetVendasByCpf(string cpf)
     {
@@ -66,6 +71,7 @@ public class VendaController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "ClienteOnly")]
     [ProducesResponseType(typeof(Venda), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] Venda venda)
@@ -88,6 +94,7 @@ public class VendaController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = "ClienteOnly")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

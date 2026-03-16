@@ -11,6 +11,8 @@ namespace Store.Infra.Data.NoSql
             _database = new LiteDatabase(connectionString);
         }
 
+
+
         public ILiteCollection<T> GetCollection<T>(string collectionName)
         {
             return _database.GetCollection<T>(collectionName);

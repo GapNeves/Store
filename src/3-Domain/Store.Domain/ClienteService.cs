@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
+using Store.Domain.Models.Enums;
 using Store.Infra.Interfaces;
 using Store.Shared;
 
@@ -33,6 +34,13 @@ public class ClienteService : IClienteService
             Cliente clienteExistente = _clienteRepositoryNoSql.GetClienteByCpf(cliente.Cpf);
             if (clienteExistente != null)
                 throw new ArgumentException("CPF já cadastrado no sistema.");
+
+            if (cliente?.Tipo == null || cliente.Tipo == 0)
+            {
+                cliente.Tipo = TipoCliente.Cliente;
+            }
+
+            cliente.Senha = BCrypt.Net.BCrypt.HashPassword(cliente.Senha);
 
             _clienteRepositoryNoSql.AddCliente(cliente);
         }
@@ -97,12 +105,25 @@ public class ClienteService : IClienteService
             if (string.IsNullOrWhiteSpace(cliente.Nome))
                 throw new ArgumentException("Nome do cliente é obrigatório");
 
-        bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            bool ehValido = Regex.IsMatch(cliente.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
 
-        if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
-            throw new ArgumentException("Email inválido, adicione um email válido.");
+            if (string.IsNullOrWhiteSpace(cliente.Email) || !ehValido)
+                throw new ArgumentException("Email inválido, adicione um email válido.");
 
-        _clienteRepositoryNoSql.UpdateCliente(cliente);
+            if (cliente?.Tipo == null || cliente.Tipo == 0)
+                cliente.Tipo = TipoCliente.Cliente;
+
+
+            Cliente clienteExistente = _clienteRepositoryNoSql.GetClienteById(cliente.Id);
+
+            bool senhaAlterada = !BCrypt.Net.BCrypt.Verify(cliente.Senha, clienteExistente?.Senha);
+
+            if (senhaAlterada)
+                cliente.Senha = BCrypt.Net.BCrypt.HashPassword(cliente.Senha);
+            else
+                cliente.Senha = clienteExistente.Senha;
+
+            _clienteRepositoryNoSql.UpdateCliente(cliente);
         }
         catch (Exception ex)
         {

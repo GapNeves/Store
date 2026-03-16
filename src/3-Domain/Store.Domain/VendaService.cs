@@ -6,13 +6,11 @@ namespace Store.Domain;
 public class VendaService : IVendaService
 {
     private readonly IVendaRepository _vendaRepositoryNoSql;
-    private readonly IClienteRepository _clienteRepositoryNoSql;
     private readonly IProdutoRepository _produtoRepositoryNoSql;
 
-    public VendaService(IVendaRepository vendaRepository, IClienteRepository clienteRepository, IProdutoRepository produtoRepository)
+    public VendaService(IVendaRepository vendaRepository, IProdutoRepository produtoRepository)
     {
         _vendaRepositoryNoSql = vendaRepository;
-        _clienteRepositoryNoSql = clienteRepository;
         _produtoRepositoryNoSql = produtoRepository;
     }
 
@@ -50,6 +48,8 @@ public class VendaService : IVendaService
             if (venda.Produtos == null || !venda.Produtos.Any())
                 throw new ArgumentException("Para iniciar uma venda, é necessário adicionar pelo menos um produto.");
 
+            List<(Produto produtoEstoque, VendaProduto vendaProduto)> produtosParaAtualizar = new List<(Produto, VendaProduto)>();
+
             foreach (VendaProduto vendaProduto in venda.Produtos)
             {
                 Produto produtoEstoque = _produtoRepositoryNoSql.GetProduto(vendaProduto.IdProduto);
@@ -66,8 +66,18 @@ public class VendaService : IVendaService
                         $"Quantidade solicitada: {vendaProduto.QtdProduto}, " +
                         $"Quantidade disponivel: {produtoEstoque.QtdEstoque}"
                     );
+
+                produtosParaAtualizar.Add((produtoEstoque, vendaProduto));
             }
 
+            foreach ((Produto produtoEstoque, VendaProduto vendaProduto) in produtosParaAtualizar)
+            {
+                produtoEstoque.QtdEstoque -= vendaProduto.QtdProduto;
+                vendaProduto.ValorTotalProduto = vendaProduto.QtdProduto * produtoEstoque.Preco;
+                _produtoRepositoryNoSql.UpdateProduto(produtoEstoque);
+            }
+
+            venda.TotalDaVenda = venda.Produtos.Sum(p => p.ValorTotalProduto);
             _vendaRepositoryNoSql.IniciaVenda(venda);
         }
         catch (Exception ex)
