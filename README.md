@@ -73,7 +73,26 @@ Controller → AppService → DomainService → Repository → LiteDB
 
 ## 🔐 Autenticação
 
-A API utiliza **JWT (JSON Web Token)** para autenticação. Configure as chaves no `appsettings.json`:
+A API utiliza **JWT (JSON Web Token)** com expiração de **15 minutos** e **sem tolerância de clock skew**. As senhas são armazenadas com hash **BCrypt**.
+
+### Perfis de Acesso
+
+| Perfil | Valor | Descrição |
+|---|---|---|
+| `Cliente` | `1` | Acesso padrão para clientes da loja |
+| `Administrador` | `2` | Acesso total ao sistema |
+
+### Políticas de Autorização
+
+| Política | Perfis permitidos |
+|---|---|
+| `AdminOnly` | Administrador |
+| `ClienteOnly` | Cliente |
+| `Everyone` | Administrador e Cliente |
+
+> Novos clientes cadastrados sem um perfil definido recebem automaticamente o perfil `Cliente`.
+
+Configure as chaves no `appsettings.json`:
 
 ```json
 {
@@ -92,36 +111,42 @@ A API utiliza **JWT (JSON Web Token)** para autenticação. Configure as chaves 
 
 ## 📡 Endpoints
 
-### Clientes — `/api/cliente`
+---
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/api/cliente` | Lista todos os clientes |
-| `GET` | `/api/cliente/{id}` | Busca cliente por ID |
-| `GET` | `/api/cliente/cpf/{cpf}` | Busca cliente por CPF |
-| `POST` | `/api/cliente` | Cria um novo cliente |
-| `PUT` | `/api/cliente/{id}` | Atualiza um cliente |
-| `DELETE` | `/api/cliente/{id}` | Remove um cliente |
+### 👤 Clientes — `/api/cliente`
 
-### Produtos — `/api/produto`
+| Método | Rota | Política | Descrição |
+|---|---|---|---|
+| `GET` | `/api/cliente` | `AdminOnly` | Lista todos os clientes |
+| `GET` | `/api/cliente/{id}` | `AdminOnly` | Busca cliente por ID |
+| `GET` | `/api/cliente/cpf/{cpf}` | `Everyone` | Busca cliente por CPF |
+| `POST` | `/api/cliente` | `Everyone` | Cria um novo cliente |
+| `PUT` | `/api/cliente/{id}` | `Everyone` | Atualiza um cliente |
+| `DELETE` | `/api/cliente/{id}` | `AdminOnly` | Remove um cliente |
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/api/produto` | Lista todos os produtos |
-| `GET` | `/api/produto/{id}` | Busca produto por ID |
-| `POST` | `/api/produto` | Cria um novo produto |
-| `PUT` | `/api/produto/{id}` | Atualiza um produto |
-| `DELETE` | `/api/produto/{id}` | Remove um produto |
+---
 
-### Vendas — `/api/venda`
+### 🛍️ Produtos — `/api/produto`
 
-| Método | Rota | Descrição |
-|---|---|---|
-| `GET` | `/api/venda` | Lista todas as vendas |
-| `GET` | `/api/venda/{id}` | Busca venda por ID |
-| `GET` | `/api/venda/cpf/{cpf}` | Busca vendas por CPF do cliente |
-| `POST` | `/api/venda` | Inicia uma nova venda |
-| `PUT` | `/api/venda/{id}` | Atualiza uma venda |
+| Método | Rota | Política | Descrição |
+|---|---|---|---|
+| `GET` | `/api/produto` | `Everyone` | Lista todos os produtos |
+| `GET` | `/api/produto/{id}` | `Everyone` | Busca produto por ID |
+| `POST` | `/api/produto` | `AdminOnly` | Cria um novo produto |
+| `PUT` | `/api/produto/{id}` | `AdminOnly` | Atualiza um produto |
+| `DELETE` | `/api/produto/{id}` | `AdminOnly` | Remove um produto |
+
+---
+
+### 🧾 Vendas — `/api/venda`
+
+| Método | Rota | Política | Descrição |
+|---|---|---|---|
+| `GET` | `/api/venda` | `AdminOnly` | Lista todas as vendas |
+| `GET` | `/api/venda/{id}` | `Everyone` | Busca venda por ID |
+| `GET` | `/api/venda/cliente/{cpf}` | `Everyone` | Busca vendas por CPF do cliente |
+| `POST` | `/api/venda` | `Everyone` | Inicia uma nova venda |
+| `PUT` | `/api/venda/{id}` | `Everyone` | Atualiza uma venda |
 
 ---
 
@@ -199,6 +224,20 @@ A API utiliza **JWT (JSON Web Token)** para autenticação. Configure as chaves 
 ## 🗄️ Banco de Dados
 
 O projeto utiliza o **LiteDB**, um banco de dados NoSQL embarcado que não requer instalação de servidor externo. O arquivo `.db` é gerado automaticamente no caminho configurado em `LiteDb:DatabasePath` (padrão: `Data/Store.db`).
+
+---
+
+## 🛡️ Tratamento de Erros
+
+A API conta com um **middleware global de exceções** (`ExceptionMiddleware`) que mapeia automaticamente os erros para os códigos HTTP corretos:
+
+| Exceção | HTTP Status |
+|---|---|
+| `ArgumentException` | `400 Bad Request` |
+| `KeyNotFoundException` | `404 Not Found` |
+| `UnauthorizedAccessException` | `401 Unauthorized` |
+| `InvalidOperationException` | `409 Conflict` |
+| Demais exceções | `500 Internal Server Error` |
 
 ---
 
