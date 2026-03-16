@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
 using Store.Domain;
 using Store.Domain.Models;
@@ -18,6 +19,7 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(typeof(IEnumerable<Produto>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
@@ -33,6 +35,7 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(typeof(Produto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
@@ -53,6 +56,7 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(Produto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] Produto produto)
@@ -71,6 +75,7 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -94,6 +99,7 @@ public class ProdutoController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)

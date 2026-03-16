@@ -1,7 +1,11 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+
 using LiteDB;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+
 using Store.AppService;
 using Store.AppService.Interfaces;
 using Store.Domain;
@@ -9,6 +13,9 @@ using Store.Domain.Interfaces;
 using Store.Host;
 using Store.Infra.Data.NoSql;
 using Store.Infra.Interfaces;
+
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+JwtSecurityTokenHandler.DefaultMapInboundClaims = false;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +55,13 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim("role", "Administrador"));
+    options.AddPolicy("ClienteOnly", policy => policy.RequireClaim("role", "Cliente"));
+    options.AddPolicy("Everyone", policy => policy.RequireClaim("role", "Administrador", "Cliente"));
+});
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -59,8 +73,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidateAudience = true,
             ValidAudience = builder.Configuration["Jwt:Audience"],
-            ValidateLifetime = true, // Verifica se o token expirou
-            ClockSkew = TimeSpan.Zero // Remove tempo extra de tolerância
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
         };
     });
 

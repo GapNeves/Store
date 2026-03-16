@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Store.Domain.Interfaces;
 using Store.Domain.Models;
+using Store.Domain.Models.Enums;
 using Store.Infra.Interfaces;
 
 namespace Store.Domain;
@@ -54,18 +55,20 @@ public class LoginService : ILoginService
     {
         byte[] key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
 
+        string role = Enum.GetName(typeof(TipoCliente), cliente.Tipo) ?? TipoCliente.Cliente.ToString();
+
         Claim[] claims = 
         [
             new Claim(ClaimTypes.NameIdentifier, cliente.Id.ToString()),
             new Claim(ClaimTypes.Name, cliente.Nome),
             new Claim(ClaimTypes.Email, cliente.Cpf),
-            new Claim(ClaimTypes.Role, cliente.Tipo.ToString())
+            new Claim("role", role)
         ];
 
         SecurityTokenDescriptor tokenDescriptor = new()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(8),
+            Expires = DateTime.UtcNow.AddMinutes(15),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(

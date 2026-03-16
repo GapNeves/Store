@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Store.AppService.Interfaces;
 using Store.Domain.Models;
 
@@ -16,6 +17,7 @@ public class ClienteController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(IEnumerable<Cliente>), StatusCodes.Status200OK)]
     public IActionResult GetAll()
     {
@@ -31,6 +33,7 @@ public class ClienteController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(typeof(Cliente), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetById(Guid id)
@@ -51,6 +54,7 @@ public class ClienteController : ControllerBase
     }
 
     [HttpGet("cpf/{cpf}")]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(typeof(Cliente), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult GetByCpf(string cpf)
@@ -71,6 +75,7 @@ public class ClienteController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(typeof(Cliente), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Create([FromBody] Cliente cliente)
@@ -89,6 +94,7 @@ public class ClienteController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Policy = "Everyone")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -112,6 +118,7 @@ public class ClienteController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Policy = "AdminOnly")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
